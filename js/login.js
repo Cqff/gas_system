@@ -7,8 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveLoginData(email, password, customerId, companyId) {
         sessionStorage.setItem('email', email);
         sessionStorage.setItem('password', password);
-        sessionStorage.setItem('customerId', customerId);
-        sessionStorage.setItem('companyId', companyId);
+        sessionStorage.setItem('managerId', customerId);
     }
 
      // Function to check if login data exists in sessionStorage

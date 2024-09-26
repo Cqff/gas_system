@@ -3,116 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gas Company Management System</title>
-    <style>
-        body {
-            font-family: 'Microsoft YaHei UI', sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            width: 350px;
-            padding: 30px;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 5px;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .login-btn, .register-btn {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            color: white;
-        }
-        .login-btn {
-            background-color: #0e90ff;
-            margin-bottom: 10px;
-        }
-        .register-btn {
-            background-color: #f5a623;
-        }
-        .exit-btn {
-            float: right;
-            color: #ff6f61;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .title {
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-    </style>
+    <title>Login Page</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-    <div class="container">
-        <div class="title">Gas Company Management System</div>
-        <div class="form-group">
-            <label for="email">Account:</label>
-            <input type="text" id="email" placeholder="Enter your email">
+    <div class="login-container">
+        <div class="login-box">
+            <div class="logo">
+                <img src="logo.png" alt="Deyu Composite Logo">
+            </div>
+            <h2>瓦斯行管理系統</h2>
+            <!-- Login form with POST method -->
+            <form id="loginForm" method="POST">
+                <label for="email">帳號：</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="password">密碼：</label>
+                <input type="password" id="password" name="password" required>
+                
+                <button type="submit" class="login-button">登入</button>
+            </form>
+            <div class="register-link">
+                <a href="#">註冊</a>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" placeholder="Enter your password">
-        </div>
-        <button class="login-btn" onclick="login()">Login</button>
-        <button class="register-btn" onclick="register()">Register</button>
     </div>
 
-    <script>
-        function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            if (!email || !password) {
-                alert("Please enter both account and password.");
-                return;
-            }
-
-            // Simulate a server request (for demo purposes)
-            // In real use, replace with an actual AJAX request to the backend
-            console.log("Email: " + email);
-            console.log("Password: " + password);
-
-            // Mock server response for login
-            if (email === "admin@example.com" && password === "admin123") {
-                alert("Login successful!");
-                // Navigate to main page (replace this with actual navigation)
-                window.location.href = "main.html";  // Main system page after login
-            } else {
-                alert("Invalid account or password.");
-            }
-        }
-
-        function register() {
-            // Redirect to registration page
-            window.location.href = "register.html";
-        }
-
-    </script>
-
+    <script src="/js/login.js"></script>
 </body>
 </html>
