@@ -3,20 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>訂單</title>
+    <link rel="icon" href="resources/DEYU.png" type="image/png">
     <style>
-        /* Add your CSS styles here */
+        .dashboard-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .table-container {
+            width: 1350px;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 860px;
+            margin-right: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            position: sticky;
+            top: 40px; /* Adjust this value based on the height of the search bar */
+            z-index: 1;
+        }
+
+        tr {
+            background-color: #f2f2f2;
+        }
+
+        .form-container {
+            width: 380px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-top: 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: bold;
+        }
+
+        label[for="order-date"] {
+            display: inline-block;
+            font-weight: bold;
+            margin-right: 5px;
+            margin-top: 10px;
+        }
+
+        label[for="order-time"] {
+            display: inline-block;
+            font-weight: bold;
+            margin-right: 5px;
+            margin-left: 10px;
+        }
+
+        input[type="date"],
+        input[type="time"] {
+            width: auto;
+            padding: 8px;
+            display: inline-block;
+            margin-bottom: 10px;
+            max-width: 350px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            max-width: 350px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        select {
+            color: black;
+            padding: 10px;
+            border: 1px  solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        tr:hover {
+            background-color: #00a1d7;
+            color: white;
+            cursor: pointer;
+        }
+
+        .highlight {
+            background-color: rgb(0, 119, 255);
+            color: white;
+        }
+
+        .search-container {
+            margin-bottom: 10px;
+            position: sticky;
+            top: 0;
+            background-color: #f9f9f9;
+            z-index: 2;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
         <div class="table-container">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="搜索...">
+            </div>
             <table id="orderTable">
                 <thead>
                     <tr>
                         <th>訂單編號</th>
                         <th>顧客編號</th>
+                        <th>當前瓦斯量</th>
                         <th>顧客電話</th>
                         <th>送貨地址</th>
                         <th>送貨日期</th>
@@ -27,19 +175,25 @@
                         <th>數量</th>
                         <th>顧客累積殘氣量</th>
                         <th>派送人員</th>
-                        <th>感測器編號</th>
-                        <th>當前瓦斯量</th>
-                        <th>是否殘氣兌換</th>
+                        <th>感應器編號</th>
+
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Data will be populated here by JavaScript -->
+                    
                 </tbody>
             </table>
         </div>
         <div class="form-container">
-            <label for="order-date">訂單日期</label>
+            <h2 for="order details">訂單資訊</h2>
+            <label for="order-id">訂單編號</label>
+            <input type="text" id="order-id" name="order-id">
+
+            <label for="order-date">送貨日期</label>
             <input type="date" id="order-date" name="order-date">
+
+            <label for="order-time">送貨時間</label>
+            <input type="time" id="order-time" name="order-time">
             
             <label for="customer-name">客戶名稱</label>
             <input type="text" id="customer-name" name="customer-name">
@@ -50,29 +204,100 @@
             <label for="quantity">數量</label>
             <input type="number" id="quantity" name="quantity">
             
-            <label for="unit">單位</label>
+            <label for="unit">容量 (kg)</label>
             <input type="text" id="unit" name="unit">
             
-            <label for="unit-price">單價</label>
-            <input type="number" id="unit-price" name="unit-price">
+            <label for="unit-price">累積殘氣 (kg)</label>
+            <input type="number" id="gas_ca" name="gas_ca">
             
             <label for="total-price">總價</label>
             <input type="number" id="total-price" name="total-price">
             
-            <label for="status">狀態</label>
-            <select id="status" name="status">
-                <option value="已完成">已完成</option>
-                <option value="進行中">進行中</option>
-                <option value="已取消">已取消</option>
+            <label for="worker">配送員</label>
+            <select id="worker" name="worker">
+
             </select>
             
             <label for="remarks">備註</label>
-            <textarea id="remarks" name="remarks" rows="4" cols="50"></textarea>
+            <textarea id="remarks" name="remarks" rows="4" cols="48" style="resize: none;"></textarea>
             
-            <button type="button" onclick="submitOrder()">提交</button>
+            <button type="button" onclick="submitOrder()" disabled>提交</button>
         </div>
     </div>
-    <script src="js/dashboard.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script>
+    document.getElementById('orderTable').addEventListener('click', function(event) {
+        const target = event.target.closest('tr');
+        if (target) {
+            document.querySelectorAll('tr').forEach(row => row.classList.remove('highlight'));
+            target.classList.add('highlight');
+            
+            const cells = target.getElementsByTagName('td');
+            document.getElementById('order-id').value = cells[0].innerText;
+            document.getElementById('order-date').value = cells[5].innerText;
+            document.getElementById('order-time').value = cells[6].innerText;
+            document.getElementById('customer-name').value = cells[7].innerText;
+            document.getElementById('order-content').value = cells[8].innerText;
+            document.getElementById('quantity').value = cells[10].innerText;
+            document.getElementById('unit').value = cells[9].innerText;
+            document.getElementById('gas_ca').value = cells[11].innerText;
+            document.getElementById('total-price').value = cells[12].innerText; 
+            const workerDropdown = document.getElementById('worker');
+            const workerName = cells[12].innerText;
+            let optionExists = false;
+
+            for (let i = 0; i < workerDropdown.options.length; i++) {
+                if (workerDropdown.options[i].value === workerName) {
+                    workerDropdown.selectedIndex = i;
+                    optionExists = true;
+                    break;
+                }
+            }
+
+            if (!optionExists) {
+                const newOption = document.createElement('option');
+                newOption.value = workerName;
+                newOption.text = workerName;
+                workerDropdown.add(newOption);
+                workerDropdown.selectedIndex = workerDropdown.options.length - 1;
+            }
+            document.getElementById('remarks').value = ''; 
+        }
+    });
+
+    document.querySelectorAll('td').forEach(cell => {
+            cell.addEventListener('click', function() {
+                // 清除其他已選中的欄位的樣式
+                document.querySelectorAll('tr').forEach(c => c.classList.remove('highlight'));
+                
+                // 標記選中的欄位
+                this.classList.add('highlight');
+            });
+        });
+
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#orderTable tbody tr');
+        rows.forEach(row => {
+            const cells = row.getElementsByTagName('td');
+            let match = false;
+            for (let i = 0; i < cells.length; i++) {
+                if (cells[i].innerText.toLowerCase().includes(filter)) {
+                    match = true;
+                    break;
+                }
+            }
+            row.style.display = match ? '' : 'none';
+        });
+    });
+</script>
+        <!-- <script>
+            // Auto-reload the page every 1 minute (60000 milliseconds)
+            setInterval(function() {
+                location.reload();
+            }, 30000);
+        </script> -->
+        
 </body>
 </html>
 
