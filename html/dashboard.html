@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="table-container">
+            <table id="orderTable">
+                <thead>
+                    <tr>
+                        <th>訂單編號</th>
+                        <th>顧客編號</th>
+                        <th>顧客電話</th>
+                        <th>送貨地址</th>
+                        <th>送貨日期</th>
+                        <th>送貨時間</th>
+                        <th>訂購人</th>
+                        <th>瓦斯桶種類</th>
+                        <th>瓦斯規格</th>
+                        <th>數量</th>
+                        <th>顧客累積殘氣量</th>
+                        <th>派送人員</th>
+                        <th>感測器編號</th>
+                        <th>當前瓦斯量</th>
+                        <th>是否殘氣兌換</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be populated here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        <div class="form-container">
+            <label for="order-date">訂單日期</label>
+            <input type="date" id="order-date" name="order-date">
+            
+            <label for="customer-name">客戶名稱</label>
+            <input type="text" id="customer-name" name="customer-name">
+            
+            <label for="order-content">訂單內容</label>
+            <input type="text" id="order-content" name="order-content">
+            
+            <label for="quantity">數量</label>
+            <input type="number" id="quantity" name="quantity">
+            
+            <label for="unit">單位</label>
+            <input type="text" id="unit" name="unit">
+            
+            <label for="unit-price">單價</label>
+            <input type="number" id="unit-price" name="unit-price">
+            
+            <label for="total-price">總價</label>
+            <input type="number" id="total-price" name="total-price">
+            
+            <label for="status">狀態</label>
+            <select id="status" name="status">
+                <option value="已完成">已完成</option>
+                <option value="進行中">進行中</option>
+                <option value="已取消">已取消</option>
+            </select>
+            
+            <label for="remarks">備註</label>
+            <textarea id="remarks" name="remarks" rows="4" cols="50"></textarea>
+            
+            <button type="button" onclick="submitOrder()">提交</button>
+        </div>
+    </div>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
+
+

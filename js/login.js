@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to handle login
     function handleLogin(email, password) {
-        const url = 'http://54.199.33.241/gas_html/api/customer_login.php';
-        // const url = 'http://127.0.0.1/api/customer_login.php';
+        //const url = 'http://54.199.33.241/gas_html/api/customer_login.php';
+        const url = 'localhost/gas_system/api/';
 
         fetch(url, {
             method: 'POST',

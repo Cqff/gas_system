@@ -3,7 +3,7 @@
 $server="localhost";
 $username="root";
 $password="";
-$database = "gas_station";
+$database = "gasstation";
 // Create connection
 $conn = new mysqli($server, $username, $password, $database);
 // Check connection

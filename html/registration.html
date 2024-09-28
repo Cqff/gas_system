@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>註冊頁面</title>
+    <link rel="stylesheet" href="css/l_style.css">
+    <!-- <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 20px;
+        }
+        .login-box {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        form {
+            width: 100%;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        label {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .login-button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        .login-button:hover {
+            background-color: #0056b3;
+        }
+        .previous-page-link {
+            margin: 10px;
+        }
+    </style> -->
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <h2>註冊</h2>
+            <form id="registrationForm" method="POST">
+                <div class="form-group">
+                    <label for="name">名稱：</label>
+                    <input type="text" id="name" name="name" required aria-required="true" aria-label="名稱">
+                </div>
+                <div class="form-group">
+                    <label for="phone">手機號碼：</label>
+                    <input type="tel" id="phone" name="phone" required aria-required="true" aria-label="手機號碼" pattern="[0-9]{10}">
+                </div>
+                <div class="form-group">
+                    <label for="email">電子信箱：</label>
+                    <input type="email" id="email" name="email" required aria-required="true" aria-label="電子信箱">
+                </div>
+                <div class="form-group">
+                    <label for="city">縣市：</label>
+                    <input type="text" id="city" name="city" required aria-required="true" aria-label="縣市">
+                </div>
+                <div class="form-group">
+                    <label for="district">地區：</label>
+                    <input type="text" id="district" name="district" required aria-required="true" aria-label="地區">
+                </div>
+                <div class="form-group">
+                    <label for="address">地址：</label>
+                    <input type="text" id="address" name="address" required aria-required="true" aria-label="地址">
+                </div>
+                <div class="form-group">
+                    <label for="password">密碼：</label>
+                    <input type="password" id="password" name="password" required aria-required="true" aria-label="密碼" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">確認密碼：</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required aria-required="true" aria-label="確認密碼" autocomplete="new-password">
+                </div>
+                <button type="submit" class="login-button">確認</button>
+            </form>
+            <div class="previous-page-link">
+                <a href="login.html">返回登入頁面</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

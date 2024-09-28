@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/l_style.css">
 </head>
 <body>
     <div class="login-container">
         <div class="login-box">
             <div class="logo">
-                <img src="logo.png" alt="Deyu Composite Logo">
+                <img src="resources/DEYU.png" alt="Deyu Composite Logo">
             </div>
             <h2>瓦斯行管理系統</h2>
             <!-- Login form with POST method -->
             <form id="loginForm" method="POST">
                 <label for="email">帳號：</label>
-                <input type="email" id="email" name="email" required>
+                <input type="text" id="email" name="email" required>
                 
                 <label for="password">密碼：</label>
                 <input type="password" id="password" name="password" required>
@@ -24,11 +24,70 @@
                 <button type="submit" class="login-button">登入</button>
             </form>
             <div class="register-link">
-                <a href="#">註冊</a>
+                <a href="registration.html">註冊</a>
             </div>
         </div>
     </div>
 
-    <script src="/js/login.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        // Function to handle login
+        function handleLogin(email, password) {
+            const url = 'http://127.0.0.1/gas_system/api/manager_login';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'email': email,
+                    'password': password
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.response === 'success') {
+                    console.log("Email: " + email);
+                    console.log("Password: " + password);
+                    console.log("Result: " + data.managerId);
+                    const managerId = data.managerId;
+                    sessionStorage.setItem('managerId', managerId);
+                    console.log(sessionStorage.getItem('managerId'));
+                    alert("登入成功！");
+                    window.location.href = 'homepage.html';
+                } else {
+                    alert("帳號或密碼錯誤。");
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                alert('An error occurred during login.');
+            });
+        }
+
+        // Handle form submission
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (email && password) {
+                handleLogin(email, password);
+            } else {
+                alert('帳號密碼欄位必填');
+            }
+        });
+    });
+    </script>
 </body>
 </html>
