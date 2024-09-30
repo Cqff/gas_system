@@ -84,3 +84,13 @@ input {
 .register-link a:hover {
     text-decoration: underline;
 }
+
+.previous-page-link a {
+    font-size: 14px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.previous-page-link a:hover {
+    text-decoration: underline;
+}

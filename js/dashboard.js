@@ -1,31 +1,31 @@
 document.addEventListener('DOMContentLoaded', function() {
     loadOrders();
-    fetchWorkers();
+    // fetchWorkers();
 });
 
-function fetchWorkers() {
-    fetch('http://127.0.0.1/gas_system/api/gas-company_getWorkers.php')
-        .then(response => response.json())
-        .then(data => {
-            const workerDropdown = document.getElementById('worker');
-            workerDropdown.innerHTML = ''; // Clear existing options
-            data.forEach(worker => {
-                const option = document.createElement('option');
-                option.value = worker.WORKER_Id;
-                option.text = worker.WORKER_Name;
-                workerDropdown.add(option);
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching workers:', error);
-        });
-}
+// function fetchWorkers() {
+//     fetch('http://127.0.0.1/gas_system/api/gas-company_getWorkers.php')
+//         .then(response => response.json())
+//         .then(data => {
+//             const workerDropdown = document.getElementById('worker');
+//             workerDropdown.innerHTML = ''; // Clear existing options
+//             data.forEach(worker => {
+//                 const option = document.createElement('option');
+//                 option.value = worker.WORKER_Id;
+//                 option.text = worker.WORKER_Name;
+//                 workerDropdown.add(option);
+//             });
+//         })
+//         .catch(error => {
+//             console.error('Error fetching workers:', error);
+//         });
+// }
 
 function loadOrders() {
-    fetch('http://127.0.0.1/gas_system/api/gas-company_getOrders.php')
+    const managerId = sessionStorage.getItem('managerId');
+    fetch(`http://127.0.0.1/gas_system/api/gas-company_getOrders.php?companyId=${managerId}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             const tableBody = document.querySelector('#orderTable tbody');
             tableBody.innerHTML = '';
             data.forEach(order => {
@@ -34,17 +34,17 @@ function loadOrders() {
                     <td>${order.ORDER_Id}</td>
                     <td>${order.CUSTOMER_Id}</td>
                     <td>${order.CurrentGasAmount !== null ? order.CurrentGasAmount : '無資料'}</td>
-                    <td>${order.CUSTOMER_PhoneNo}</td>
-                    <td>${order.DELIVERY_Address}</td>
+                    <td>${order.CUSTOMER_PhoneNo !== null ? order.CUSTOMER_PhoneNo : '無資料'}</td>
+                    <td>${order.DELIVERY_Address !== null ? order.DELIVERY_Address : '無資料'}</td>
                     <td>${order.EXPECT_Time !== null ? order.EXPECT_Time.split(' ')[0] : '無資料'}</td>
                     <td>${order.EXPECT_Time !== null ? order.EXPECT_Time.split(' ')[1] : '無資料'}</td>
-                    <td>${order.CUSTOMER_Name}</td>
-                    <td>${order.Order_type}</td>
-                    <td>${order.Order_weight}</td>
-                    <td>${order.Gas_Quantity}</td>
-                    <td>${order.Gas_Volume}</td>
-                    <td>${order.WORKER_Name !== '0' ? order.WORKER_Name : ''}</td>
-                    <td>${order.sensor_id}</td>
+                    <td>${order.CUSTOMER_Name !== null ? order.CUSTOMER_Name : '無資料'}</td>
+                    <td>${order.Order_type !== null ? order.Order_type : '無資料'}</td>
+                    <td>${order.Order_weight !== null ? order.Order_weight : '無資料'}</td>
+                    <td>${order.Gas_Quantity !== null ? order.Gas_Quantity : '無資料'}</td>
+                    <td>${order.Gas_Volume !== null ? order.Gas_Volume : '無資料'}</td>
+                    <td>${order.WORKER_Name !== null ? order.WORKER_Name : '尚未指派'}</td>
+                    <td>${order.sensor_id !== '0' ? order.sensor_id : '無資料'}</td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -83,4 +83,31 @@ function submitOrder() {
             alert('Failed to submit order');
         }
     });
+
+function filterOrders() {
+    const filter = document.getElementById('filterInput').value.toLowerCase();
+    const rows = document.querySelectorAll('#orderTable tbody tr');
+    rows.forEach(row => {
+        const cells = row.getElementsByTagName('td');
+        let match = false;
+        for (let i = 0; i < cells.length; i++) {
+            if (cells[i].innerText.toLowerCase().includes(filter)) {
+                match = true;
+                break;
+            }
+        }
+        row.style.display = match ? '' : 'none';
+    });
+}
+
+document.getElementById('filterInput').addEventListener('keyup', filterOrders);
+
+document.addEventListener('DOMContentLoaded', function() {
+    const filterContainer = document.createElement('div');
+    filterContainer.className = 'filter-container';
+    filterContainer.innerHTML = `
+        <input type="text" id="filterInput" class="filter-input" placeholder="篩選...">
+    `;
+    document.querySelector('.table-container').insertBefore(filterContainer, document.querySelector('#orderTable'));
+});
 }

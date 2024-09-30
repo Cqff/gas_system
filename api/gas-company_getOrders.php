@@ -5,7 +5,13 @@ header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 include 'conn.php';
 
-$companyId = '1'; // Assuming companyId is passed as a query parameter
+if (isset($_GET['companyId'])) {
+    $companyId = $_GET['companyId'];
+} else {
+    http_response_code(400);
+    echo json_encode(array("response" => "error", "message" => "Invalid request: companyId is missing"));
+    exit();
+}
 
 $sql = "SELECT o.ORDER_Id, o.CUSTOMER_Id, c.CUSTOMER_PhoneNo, o.DELIVERY_Address, o.EXPECT_Time, od.exchange, c.CUSTOMER_Name, od.Order_type, od.Order_weight, o.Gas_Quantity, ca.Gas_Volume, a.WORKER_Id, w.WORKER_Name, o.sensor_id,
                         (

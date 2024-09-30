@@ -10,24 +10,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-if (isset($_POST['email']) && isset($_POST['password'])) {
+if (isset($_GET['managerId'])) {
     require_once "conn.php";
     require_once "validate.php";
 
     // Call validate, pass form data as parameter and store the returned value
-    $email = validate($_POST['email']);
-    $password = validate($_POST['password']);
+    $managerId = validate($_GET['managerId']);
 
-    $stmt = $conn->prepare("SELECT Manager_ID FROM manager_account WHERE MANAGER_Email = ? AND MANAGER_Password = ?");
-    $stmt->bind_param("ss", $email, $password);
+    $stmt = $conn->prepare("SELECT MANAGER_Name FROM manager_account WHERE Manager_ID = ?");
+    $stmt->bind_param("i", $managerId);
     $stmt->execute();
-    $stmt->bind_result($managerId);
+    $stmt->bind_result($managerName);
     $stmt->fetch();
 
-    if ($managerId) {
-        $response = array("response" => "success", "managerId" => $managerId);
+    if ($managerName) {
+        $response = array("response" => "success", "managerName" => $managerName);
     } else {
-        $response = array("response" => "error");
+        $response = array("response" => "error", "message" => "Manager not found");
     }
 
     $stmt->close();
@@ -39,4 +38,3 @@ if (isset($_POST['email']) && isset($_POST['password'])) {
     echo json_encode(array("response" => "error", "message" => "Invalid request"));
 }
 ?>
-

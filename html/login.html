@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
+    <link rel="icon" href="resources/DEYU.png" type="image/png">
     <link rel="stylesheet" href="css/l_style.css">
 </head>
 <body>
@@ -37,7 +38,7 @@
 
         // Function to handle login
         function handleLogin(email, password) {
-            const url = 'http://127.0.0.1/gas_system/api/manager_login';
+            const url = 'http://127.0.0.1/gas_system/api/manager_login.php';
 
             fetch(url, {
                 method: 'POST',
@@ -63,10 +64,11 @@
                     const managerId = data.managerId;
                     sessionStorage.setItem('managerId', managerId);
                     console.log(sessionStorage.getItem('managerId'));
-                    alert("登入成功！");
                     window.location.href = 'homepage.html';
                 } else {
                     alert("帳號或密碼錯誤。");
+                    emailInput.value = '';
+                    passwordInput.value = '';
                 }
             })
             .catch(error => {
