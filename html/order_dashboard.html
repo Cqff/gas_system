@@ -211,7 +211,7 @@
                 <input type="text" id="searchInput" class="search-input" placeholder="搜索...">
                 <div class="button-container">
                     <button type="button" class="add" onclick="openNewOrderPopup()">新增</button>
-                    <button type="button" class="delete">刪除</button>
+                    <button type="button" class="delete" onclick="confirmDelete()">刪除</button>
                 </div>
             </div>
             <table id="orderTable">
@@ -390,6 +390,44 @@
             .catch(error => {
                 console.error('Error updating order:', error);
                 alert('更新訂單時發生錯誤');
+            });
+        }
+
+        function confirmDelete() {
+            const highlightedRow = document.querySelector('.highlight');
+            if (!highlightedRow) {
+                alert('請選擇要刪除的訂單');
+                return;
+            }
+
+            const orderId = highlightedRow.getElementsByTagName('td')[0].innerText;
+            const confirmation = confirm('確定要刪除訂單編號 ' + orderId + ' 嗎？');
+
+            if (confirmation) {
+                deleteOrder(orderId);
+            }
+        }
+
+        function deleteOrder(orderId) {
+            fetch('http://127.0.0.1/gas_system/api/gas-company_deleteOrder.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ orderId: orderId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.response === 'success') {
+                    alert('訂單已成功刪除');
+                    loadOrders(); // Reload the orders to reflect the deletion
+                } else {
+                    alert('刪除訂單時發1生錯誤');
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting order:', error);
+                alert('刪除訂單時發生錯誤');
             });
         }
     </script>
