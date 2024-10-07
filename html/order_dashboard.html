@@ -285,6 +285,10 @@
     </div>
     <script src="../js/dashboard.js"></script>
     <script>
+        function openNewOrderPopup() {
+            window.open('new_order.html', 'New Order', 'width=600,height=400');
+        }
+
         document.getElementById('orderTable').addEventListener('click', function(event) {
             const target = event.target.closest('tr');
             if (target) {

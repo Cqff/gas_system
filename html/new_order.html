@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="resources/DEYU.png" type="image/png">
+    <title>新增訂單</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 15px;
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        input[type="date"],
+        input[type="text"],
+        input[type="number"]{
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 17px;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>新增訂單</h1>
+    <form id="orderForm" onsubmit="event.preventDefault(); submitForm();">
+        <label for="orderDate">訂單日期</label>
+        <input type="date" id="orderDate" name="orderDate">
+        <label for="time">送貨時間</label>
+        <select id="Time" class="timeSelect">
+            <option value="08:00:00">08:00 - 10:00</option>
+            <option value="10:00:00">10:00 - 12:00</option>
+            <option value="12:00:00">12:00 - 14:00</option>
+            <option value="14:00:00">14:00 - 16:00</option>
+            <option value="16:00:00">16:00 - 18:00</option>
+            <option value="18:00:00">18:00 - 20:00</option>
+        </select>
+        <label for="customerName">客戶名稱</label>
+        <select name="customerName" id="customerName">
+            
+        </select>
+        <label for="orderContent">瓦斯桶種類</label>
+        <select name="gastype" id="gastype">
+            <option value="tradition">傳統</option>
+            <option value="composite">複合材料</option>
+        </select>
+        <label for="unit">瓦斯規格</label>
+        <select name="unit" id="unit">
+            <option value="5kg">5 公斤</option>
+            <option value="10kg">10 公斤</option>
+            <option value="20kg">20 公斤</option>
+        </select>
+        <label for="quantity">數量</label>
+        <input type="number" id="quantity" name="quantity" min="1">
+        <label for="status">配送員</label>
+        <select name="workers" id="workers"></select>
+        <input type="submit" value="新增">
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchCustomers();
+            fetchWorkers();
+        });
+
+        function fetchCustomers() {
+            const companyId = sessionStorage.getItem('managerId'); 
+            fetch(`http://127.0.0.1/gas_system/api/gas-company_getCustomer.php?companyId=${companyId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const customerDropdown = document.getElementById('customerName');
+                    customerDropdown.innerHTML = '<option value="">請選擇客戶</option>'; // Clear existing options and add placeholder
+                    data.forEach(customer => {
+                        const option = document.createElement('option');
+                        option.value = customer.CUSTOMER_Id;
+                        option.text = customer.CUSTOMER_Name;
+                        customerDropdown.appendChild(option); 
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching customers:', error);
+                });
+        }
+
+        function fetchWorkers() {
+            const companyId = sessionStorage.getItem('managerId'); 
+            fetch(`http://127.0.0.1/gas_system/api/gas-company_getWorkers.php?companyId=${companyId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const workersDropdown = document.getElementById('workers');
+                    workersDropdown.innerHTML = '<option value="">請選擇配送員</option>'; 
+                    data.forEach(worker => {
+                        const option = document.createElement('option');
+                        option.value = worker.WORKER_Id;
+                        option.text = worker.WORKER_Name;
+                        workersDropdown.appendChild(option); 
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching workers:', error);
+                });
+        }
+
+        function submitForm() {
+            const form = document.getElementById('orderForm');
+            const formData = new FormData(form);
+            const customerId = formData.get('customerName');
+            const companyId = sessionStorage.getItem('managerId');
+            const deliveryCondition = formData.get('deliveryCondition');
+            const deliveryAddress = formData.get('deliveryAddress');
+            const deliveryPhone = formData.get('deliveryPhone');
+            const gasQuantity = formData.get('quantity');
+            const orderTime = formData.get('orderDate') + ' ' + formData.get('Time');
+            const expectTime = formData.get('orderDate') + ' ' + formData.get('Time');
+            const deliveryMethod = formData.get('deliveryMethod');
+            const sensorId = formData.get('sensorId');
+
+            fetch('http://127.0.0.1/gas_system/api/gas-company_NewOrder.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    customerId,
+                    companyId,
+                    deliveryCondition,
+                    deliveryAddress,
+                    deliveryPhone,
+                    gasQuantity,
+                    orderTime,
+                    expectTime,
+                    deliveryMethod,
+                    sensorId
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.response === 'success') {
+                    setTimeout(() => {
+                        window.location.href = 'orderConfirmed.html';
+                        window.close();
+                    }, 5000);
+                } else {
+                    alert('訂單新增失敗');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting form:', error);
+            });
+        }
+    </script>
+</body>
+</html>
