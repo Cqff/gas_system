@@ -274,12 +274,6 @@
             <label for="remarks">備註</label>
             <textarea id="remarks" name="remarks" rows="4" cols="48" style="resize: none;"></textarea>
             
-            <label for="delivery-man">配送員</label>
-            <select id="delivery-man" name="delivery-man"></select>
-            
-            <label for="expect-time">預計送達時間</label>
-            <input type="datetime-local" id="expect-time" name="expect-time">
-            
             <button type="button" class="modify" onclick="modifyOrder()">編輯</button>
         </div>
     </div>
@@ -440,25 +434,25 @@
             });
         }
 
-        function populateDeliveryManDropdown() {
-            fetch('http://127.0.0.1/gas_system/api/gas-company_getWorker.php')
-            .then(response => response.json())
-            .then(data => {
-                const deliveryManDropdown = document.getElementById('delivery-man');
-                deliveryManDropdown.innerHTML = '';
-                data.forEach(worker => {
-                    const option = document.createElement('option');
-                    option.value = worker.WORKER_Id;
-                    option.textContent = worker.WORKER_Name;
-                    deliveryManDropdown.appendChild(option);
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching delivery men:', error);
-            });
-        }
+        // function populateDeliveryManDropdown() {
+        //     fetch('http://127.0.0.1/gas_system/api/gas-company_getWorker.php')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         const deliveryManDropdown = document.getElementById('delivery-man');
+        //         deliveryManDropdown.innerHTML = '';
+        //         data.forEach(worker => {
+        //             const option = document.createElement('option');
+        //             option.value = worker.WORKER_Id;
+        //             option.textContent = worker.WORKER_Name;
+        //             deliveryManDropdown.appendChild(option);
+        //         });
+        //     })
+        //     .catch(error => {
+        //         console.error('Error fetching delivery men:', error);
+        //     });
+        // }
 
-        document.addEventListener('DOMContentLoaded', populateDeliveryManDropdown);
+        // document.addEventListener('DOMContentLoaded', populateDeliveryManDropdown);
     </script>
 </body>
 </html>
