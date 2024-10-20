@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>殘氣管理</title>
+    <link rel="icon" href="resources/DEYU.png" type="image/png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        .dashboard-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .table-container {
+            width: 1350px;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 860px;
+            margin-right: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            position: sticky;
+            top: 40px; 
+            z-index: 1;
+
+        }
+
+        tr {
+            background-color: #f2f2f2;
+        }
+
+        .form-container {
+            width: 380px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-top: 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: bold;
+        }
+
+        input[type="date"],
+        input[type="time"] {
+            width: auto;
+            padding: 8px;
+            display: inline-block;
+            margin-bottom: 10px;
+            max-width: 350px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            max-width: 350px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        select {
+            color: black;
+            padding: 10px;
+            border: 1px  solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:disabled {
+            background-color: darkgray;
+            pointer-events: none;
+        }
+
+        .add {
+            background-color: #00d63d;
+        }
+
+        .modify {
+            background-color: #007bff;
+            
+            font-size: 16px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .delete {
+            background-color: #ff0000;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        tr:hover {
+            background-color: #00a1d7;
+            color: white;
+            cursor: pointer;
+        }
+
+        .highlight {
+            background-color: rgb(0, 119, 255);
+            color: white;
+        }
+
+        .search-container {
+            margin-bottom: 10px;
+            position: sticky;
+            top: 0;
+            background-color: #f9f9f9;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .search-input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .button-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .button-container button {
+            width: auto;
+            padding: 10px;
+            font-size: 16px;
+            margin-left: 5px;
+            z-index: 2;
+        }
+
+        .home-button {
+            max-width: 120px;
+            margin-right: 10px;
+        }
+
+        .home-button img {
+            width: 100%;
+            height: auto;
+        }
+
+        .material-symbols-outlined {
+            color: black;
+        }
+
+        .buttonGroup {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .buttonGroup-modify {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .submit {
+            margin-right: 5px;
+            margin-top: 10px;
+            position: relative;
+            background-color: #14b642da;
+        }
+
+        .cancel {
+            margin-left: 5px;
+            margin-top: 10px;
+            position: relative; 
+            background-color: #bb0a0ac5;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="table-container">
+            <div class="search-container">
+                <div class="home-button">
+                    <button type="button" onclick="location.href='homepage.html'">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </button>
+                </div>
+                <input type="text" id="searchInput" class="search-input" placeholder="搜索...">
+                <div class="button-container">
+                    
+                </div>
+            </div>
+            <table id="accuTable">
+                <thead>
+                    <tr>
+                        <th>累積編號</th>
+                        <th>客戶編號</th>
+                        <th>客戶姓名</th>
+                        <th>殘氣量</th>
+                        <th>客戶地址</th>
+                        <th>客戶電話</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+        <div class="form-container">
+            <h2 for="accu details">殘氣資訊</h2>
+            <label for="accu-id">累積編號</label>
+            <input type="number" id="accu-id" name="accu-id" readonly>
+
+            <label for="customer-id">客戶編號</label>
+            <input type="number" id="customer-id" name="customer-id" readonly>
+            
+            <label for="customer-name">客戶姓名</label>
+            <input type="text" id="customer-name" name="customer-name" readonly>
+            
+            <label for="accu-volume">殘氣量</label>
+            <input type="number" id="accu-volume" name="accu-volume" readonly>
+            
+            <label for="customer-address">客戶地址</label>
+            <input type="text" id="customer-address" name="customer-address" readonly>
+            
+            <label for="customer-phone">客戶電話</label>
+            <input type="text" id="customer-phone" name="customer-phone" readonly>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('../api/accumulation_Show.php')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector('#accuTable tbody');
+                tableBody.innerHTML = '';
+                
+                data.forEach(aData => {
+                    const row = document.createElement('tr');
+                    console.log(aData);
+                    
+                    row.innerHTML = `
+                        <td>${aData.Accum_Id !== null ? aData.Accum_Id : '' }</td>
+                        <td>${aData.Customer_Id !== null ? aData.Customer_Id : '' }</td>
+                        <td>${aData.CUSTOMER_Name !== null ? aData.CUSTOMER_Name : '' }</td>
+                        <td>${aData.Gas_Volume !== null ? aData.Gas_Volume : '' }</td>
+                        <td>${aData.CUSTOMER_Address !== null ? aData.CUSTOMER_Address : '' }</td>
+                        <td>${aData.CUSTOMER_PhoneNo !== null ? aData.CUSTOMER_PhoneNo : '' }</td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                })
+            })
+        })
+
+        // table selector
+        document.getElementById('accuTable').addEventListener('click', function(event) {
+            const target = event.target.closest('tr');
+            if (target) {
+                document.querySelectorAll('tr').forEach(row => row.classList.remove('highlight'));
+                target.classList.add('highlight');
+                
+                const cells = target.getElementsByTagName('td');
+                document.getElementById('accu-id').value = cells[0].innerText;
+                document.getElementById('customer-id').value = cells[1].innerText;
+                document.getElementById('customer-name').value = cells[2].innerText;
+                document.getElementById('accu-volume').value = cells[3].innerText;
+                document.getElementById('customer-address').value = cells[4].innerText;
+                document.getElementById('customer-phone').value = cells[5].innerText;
+            } 
+        });
+
+        document.querySelectorAll('td').forEach(cell => {
+                cell.addEventListener('click', function() {
+                    document.querySelectorAll('tr').forEach(c => c.classList.remove('highlight'));
+                    
+                    this.classList.add('highlight');
+                });
+            });
+
+        // search function
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const filter = this.value.toLowerCase();  // Get the search input and convert to lowercase
+            const rows = document.querySelectorAll('#accuTable tbody tr');  // Select all table rows
+
+            // Loop through each row and check if it matches the search query
+            rows.forEach(row => {
+                const cells = row.getElementsByTagName('td');
+                let match = false;
+
+                // Loop through each cell in the row
+                for (let i = 0; i < cells.length; i++) {
+                    const cellContent = cells[i].innerText.toLowerCase();  // Get cell content and convert to lowercase
+
+                    // If any cell content matches the search query, set match to true
+                    if (cellContent.includes(filter)) {
+                        match = true;
+                        break;
+                    }
+                }
+
+                // Show the row if there's a match, hide it otherwise
+                if (match) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+    </script>
+
+</body>

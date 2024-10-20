@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>員工管理</title>
+    <link rel="icon" href="resources/DEYU.png" type="image/png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        .dashboard-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .table-container {
+            width: 1350px;
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 860px;
+            margin-right: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            position: sticky;
+            top: 40px; 
+            z-index: 1;
+
+        }
+
+        tr {
+            background-color: #f2f2f2;
+        }
+
+        .form-container {
+            width: 380px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            margin-top: 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: bold;
+        }
+
+        input[type="date"],
+        input[type="time"] {
+            width: auto;
+            padding: 8px;
+            display: inline-block;
+            margin-bottom: 10px;
+            max-width: 350px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            max-width: 350px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        select {
+            color: black;
+            padding: 10px;
+            border: 1px  solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        button {
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:disabled {
+            background-color: darkgray;
+            pointer-events: none;
+        }
+
+        .add {
+            background-color: #00d63d;
+        }
+
+        .modify {
+            background-color: #007bff;
+            
+            font-size: 16px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .delete {
+            background-color: #ff0000;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        tr:hover {
+            background-color: #00a1d7;
+            color: white;
+            cursor: pointer;
+        }
+
+        .highlight {
+            background-color: rgb(0, 119, 255);
+            color: white;
+        }
+
+        .search-container {
+            margin-bottom: 10px;
+            position: sticky;
+            top: 0;
+            background-color: #f9f9f9;
+            z-index: 2;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .search-input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .button-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .button-container button {
+            width: auto;
+            padding: 10px;
+            font-size: 16px;
+            margin-left: 5px;
+            z-index: 2;
+        }
+
+        .home-button {
+            max-width: 120px;
+            margin-right: 10px;
+        }
+
+        .home-button img {
+            width: 100%;
+            height: auto;
+        }
+
+        .material-symbols-outlined {
+            color: black;
+        }
+
+        .buttonGroup {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .buttonGroup-modify {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .submit {
+            margin-right: 5px;
+            margin-top: 10px;
+            position: relative;
+            background-color: #14b642da;
+        }
+
+        .cancel {
+            margin-left: 5px;
+            margin-top: 10px;
+            position: relative; 
+            background-color: #bb0a0ac5;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="table-container">
+            <div class="search-container">
+                <div class="home-button">
+                    <button type="button" onclick="location.href='homepage.html'">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </button>
+                </div>
+                <input type="text" id="searchInput" class="search-input" placeholder="搜索...">
+                <div class="button-container">
+                    <button type="button" id="add" class="add" onclick="addData()">新增</button>
+                    <button type="button" id="delete" class="delete" onclick="deleteData()">刪除</button>
+                </div>
+            </div>
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>員工編號</th>
+                        <th>員工姓名</th>
+                        <th>員工性別</th>
+                        <th>員工電話</th>
+                        <th>員工家用電話</th>
+                        <th>員工電子郵件</th>
+                        <th>員工地址</th>
+                        <th>員工權限</th>
+                        <th>員工公司</th>
+                        <th>備註</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+        <div class="form-container">
+            <h2 for="data details">員工資訊</h2>
+            <label for="worker-id">員工編號 (不可修改/填寫)</label>
+            <input type="text" id="worker-id" name="worker-id" readonly>
+
+            <label for="worker-name">員工姓名</label>
+            <input type="text" id="worker-name" name="worker-name" readonly>
+            
+            <label for="worker-sex">員工性別</label>
+            <input type="text" id="worker-sex" name="worker-sex" readonly>
+            
+            <label for="worker-phone">員工電話</label>
+            <input type="text" pattern="\d*" id="worker-phone" name="worker-phone" readonly>
+            
+            <label for="worker-houseTel">員工家用電話</label>
+            <input type="text" pattern="\d*" id="worker-houseTel" name="worker-houseTel" readonly>
+
+            <label for="worker-email">員工電子郵件</label>
+            <input type="text" id="worker-email" name="worker-email" readonly>
+
+            <label for="worker-address">員工地址</label>
+            <input type="text" id="worker-address" name="worker-address" readonly>
+
+            <label for="worker-permission">員工權限</label>
+            <input type="number" id="worker-permission" name="worker-permission" readonly>
+
+            <label for="worker-company">員工公司</label>
+            <input type="number" id="worker-company" name="worker-company" readonly>
+
+            <label for="notes">備註</label>
+            <textarea id="notes" name="notes" rows="4" cols="48" style="resize: none;"></textarea>
+
+            <div class="buttonGroup">
+                <button disabled type="button" id="modify" class="modify" onclick="changeButton(event)">編輯</button>
+            </div>  
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('../api/workerData_Show.php')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector('#dataTable tbody');
+                tableBody.innerHTML = '';
+                
+                data.forEach(wData => {
+                    const row = document.createElement('tr');
+                    
+                    row.innerHTML = `
+                        <td>${wData.WORKER_Id}</td>
+                        <td>${wData.WORKER_Name}</td>
+                        <td>${wData.WORKER_Sex === ('Male' || '1' || '男') ? '男' : '女' }</td>
+                        <td>${wData.WORKER_PhoneNum !== null ? wData.WORKER_PhoneNum : '' }</td>
+                        <td>${wData.WORKER_HouseTelpNo !== null ? wData.WORKER_HouseTelpNo : '' }</td>
+                        <td>${wData.WORKER_Email !== null ? wData.WORKER_Email : '' }</td>
+                        <td>${wData.WORKER_Address !== null ? wData.WORKER_Address : '' }</td>
+                        <td>${wData.Permission !== null ? wData.Permission : '' }</td> 
+                        <td>${wData.WORKER_Company_Id !== null ? wData.WORKER_Company_Id : '' }</td>
+                        <td>${wData.WORKER_notes !== null ? wData.WORKER_notes : '' }</td> 
+                    `;
+                    
+                    tableBody.appendChild(row);
+                })
+            })
+
+            document.addEventListener('click', handleClickOutsideForm);
+            
+            addMode = false;
+            hasTarget = false;
+
+        })
+
+        // table selector
+        document.getElementById('dataTable').addEventListener('click', function(event) {
+            const target = event.target.closest('tr');
+            if (target) {
+                hasTarget = true;
+                document.querySelectorAll('tr').forEach(row => row.classList.remove('highlight'));
+                target.classList.add('highlight');
+                
+                const cells = target.getElementsByTagName('td');
+                document.getElementById('worker-id').value = cells[0].innerText;
+                document.getElementById('worker-name').value = cells[1].innerText;
+                document.getElementById('worker-sex').value = cells[2].innerText;
+                document.getElementById('worker-phone').value = cells[3].innerText;
+                document.getElementById('worker-houseTel').value = cells[4].innerText;
+                document.getElementById('worker-email').value = cells[5].innerText;
+                document.getElementById('worker-address').value = cells[6].innerText;
+                document.getElementById('worker-permission').value = cells[7].innerText;
+                document.getElementById('worker-company').value = cells[8].innerText;
+                document.getElementById('notes').value = cells[9].innerText;
+                
+
+                getOriginalForm(cells);
+
+                // prevent modify button to be clicked when form is empty
+                const modifyButton = document.getElementById('modify');
+                if (modifyButton) {
+                    modifyButton.removeAttribute('disabled');
+                }
+            } 
+        });
+
+        document.querySelectorAll('td').forEach(cell => {
+                cell.addEventListener('click', function() {
+                    document.querySelectorAll('tr').forEach(c => c.classList.remove('highlight'));
+                    
+                    this.classList.add('highlight');
+                });
+            });
+
+        
+        // func modify button
+        function changeButton(event) {
+            event.stopPropagation();
+                
+            const inputs = document.querySelectorAll('.form-container input, .form-container textarea');
+            inputs.forEach(input => input.removeAttribute('readonly'));
+            document.getElementById('worker-id').setAttribute('readonly', true);
+
+            const buttonGroup = document.querySelector('.buttonGroup');
+
+            const submitBtn = document.createElement('button');
+            submitBtn.type = 'button1';
+            submitBtn.innerText = '送出';
+            submitBtn.classList.add('submit');
+            submitBtn.onclick = function() {
+                
+                if (addMode) {
+                    var y = confirm('確定新增資料欄位? \n (電話、電子信箱不可重複且必填。否則新增失敗)');
+                    if (y) {
+                        const name = document.getElementById('worker-name').value;
+                        const sex = (document.getElementById('worker-sex').value === '男' ? 1 : 0);
+                        const phone = document.getElementById('worker-phone').value;
+                        const houseTel = document.getElementById('worker-houseTel').value;
+                        const email = document.getElementById('worker-email').value;
+                        const address = document.getElementById('worker-address').value;
+                        const permission = document.getElementById('worker-permission').value;
+                        const company = document.getElementById('worker-company').value;
+                        const notes = document.getElementById('notes').value;
+
+                        const a = new URLSearchParams(); 
+                        a.append('name', name);
+                        a.append('sex', sex);
+                        a.append('phone', phone);
+                        a.append('houseTel', houseTel);
+                        a.append('email', email);
+                        a.append('address', address);
+                        a.append('permission', permission);
+                        a.append('company', company);
+                        a.append('notes', notes);
+
+                        fetch('../api/workerData_Add.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: a
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                alert('員工編號 ' + data.id + ' 新增成功!');
+                                location.reload();
+                                
+                            } else {
+                                alert('新增失敗');
+                            }
+
+                            
+                        })
+                        .catch(error => {
+                            alert('新增失敗，請檢查格式或公司編號是否存在 \n (電話、電子信箱不可重複且必填。否則新增失敗)')
+                        })
+                    } else {
+                        return;
+                    }    
+                } else {
+                    var y = confirm('確定修改資料欄位?');
+                    if (y) {
+                        const id = document.getElementById('worker-id').value;
+                        const name = document.getElementById('worker-name').value;
+                        const sex = (document.getElementById('worker-sex').value === '男' ? 1 : 0);
+                        const phone = document.getElementById('worker-phone').value;
+                        const houseTel = document.getElementById('worker-houseTel').value;
+                        const email = document.getElementById('worker-email').value;
+                        const address = document.getElementById('worker-address').value;
+                        const permission = document.getElementById('worker-permission').value;
+                        const company = document.getElementById('worker-company').value;
+                        const notes = document.getElementById('notes').value;
+
+                        const a = new URLSearchParams(); 
+                        a.append('id', id);
+                        a.append('name', name);
+                        a.append('sex', sex);
+                        a.append('phone', phone);
+                        a.append('houseTel', houseTel);
+                        a.append('email', email);
+                        a.append('address', address);
+                        a.append('permission', permission);
+                        a.append('company', company);
+                        a.append('notes', notes);
+                        
+                        fetch('../api/workerData_Update.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: a
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                alert('客戶編號 ' + id + ' 修改成功!');
+                                location.reload();
+                                
+                            } else {
+                                alert('修改失敗');
+                            }
+                        })
+                        .catch(error => {
+                            alert('修改失敗，請檢查格式或公司編號是否存在 \n (電話、電子信箱不可重複且必填。否則新增失敗)')
+                        })
+                    } else {
+                        return;
+                    }
+                }
+            };
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.type = 'button1';
+            cancelBtn.innerText = '取消';
+            cancelBtn.classList.add('cancel');
+            cancelBtn.onclick = function() {
+                resetForm();
+                resetButtons();
+                const inputs = document.querySelectorAll('.form-container input, .form-container textarea');
+                inputs.forEach(input => input.setAttribute('readonly', true));
+            };
+
+            buttonGroup.innerHTML = '';  
+            buttonGroup.appendChild(submitBtn);
+            buttonGroup.appendChild(cancelBtn);
+
+            buttonGroup.classList.add('buttonGroup-modify');
+                
+        }
+
+        // reset buttons to original
+        function resetButtons() {
+            const buttonGroup = document.querySelector('.buttonGroup');
+            buttonGroup.classList.remove('buttonGroup-modify');
+            buttonGroup.innerHTML = `
+                <button disabled type="button" id="modify" class="modify" onclick="changeButton(event)">編輯</button>
+            `;
+        }
+
+        // func to check clicks outside the form
+        function handleClickOutsideForm(event) {
+            const formContainer = document.querySelector('.form-container');
+            const buttonGroup = document.querySelector('.buttonGroup');
+            const addB = document.querySelector('.add');
+
+            if (!formContainer.contains(event.target) && !buttonGroup.contains(event.target) && !addB.contains(event.target)) {
+                // If in addMode, reset it
+                if (addMode) {
+                    addMode = false; // Exit add mode
+            
+                    const addButton = document.getElementById('add');
+                    addButton.style.backgroundColor = '';
+                    addButton.innerText = '新增';
+                }
+
+                const inputs = document.querySelectorAll('.form-container input, .form-container textarea');
+                inputs.forEach(input => input.setAttribute('readonly', true));
+                resetForm();
+                resetButtons();
+
+                if (hasTarget) {
+                    const modifyButton = document.getElementById('modify');
+                    if (modifyButton) {
+                        modifyButton.removeAttribute('disabled');
+                    }
+                }
+            }
+        }
+
+        let originalFormData = {};
+
+        // func to get and save the form
+        function getOriginalForm(cells) {
+            // prevent getting empty data
+            if (cells.length === 0) {
+                return;
+            }
+
+            document.getElementById('worker-id').value = cells[0].innerText;
+            document.getElementById('worker-name').value = cells[1].innerText;
+            document.getElementById('worker-sex').value = cells[2].innerText;
+            document.getElementById('worker-phone').value = cells[3].innerText;
+            document.getElementById('worker-houseTel').value = cells[4].innerText;
+            document.getElementById('worker-email').value = cells[5].innerText;
+            document.getElementById('worker-address').value = cells[6].innerText;
+            document.getElementById('worker-permission').value = cells[7].innerText;
+            document.getElementById('worker-company').value = cells[8].innerText;
+            document.getElementById('notes').value = cells[9].innerText;
+
+            originalFormData = {
+                id: cells[0].innerText,
+                name: cells[1].innerText,
+                sex: cells[2].innerText,
+                phone: cells[3].innerText,
+                houseTel: cells[4].innerText,
+                email: cells[5].innerText,
+                address: cells[6].innerText,
+                permission: cells[7].innerText,
+                company: cells[8].innerText,
+                notes: cells[9].innerText
+            };
+        }
+
+        // reset the form
+        function resetForm() {
+            // prevent putting undefined data
+            if (Object.keys(originalFormData).length === 0) {
+                document.getElementById('worker-id').value = '';
+                document.getElementById('worker-name').value = '';
+                document.getElementById('worker-sex').value = '';
+                document.getElementById('worker-phone').value = '';
+                document.getElementById('worker-houseTel').value = '';
+                document.getElementById('worker-email').value = '';
+                document.getElementById('worker-address').value = '';
+                document.getElementById('worker-permission').value = '';
+                document.getElementById('worker-company').value = '';
+                document.getElementById('notes').value = '';
+            } else {
+                document.getElementById('worker-id').value = originalFormData.id;
+                document.getElementById('worker-name').value = originalFormData.name;
+                document.getElementById('worker-sex').value = originalFormData.sex;
+                document.getElementById('worker-phone').value = originalFormData.phone;
+                document.getElementById('worker-houseTel').value = originalFormData.houseTel;
+                document.getElementById('worker-email').value = originalFormData.email;
+                document.getElementById('worker-address').value = originalFormData.address;
+                document.getElementById('worker-permission').value = originalFormData.permission;
+                document.getElementById('worker-company').value = originalFormData.company;
+                document.getElementById('notes').value = originalFormData.notes;
+            }
+        }
+        
+        // func to add new data
+        function addData() {
+            
+            const addButton = document.getElementById('add');
+            
+            if (addMode) {
+                addMode = false;
+                addButton.style.backgroundColor = '';
+                addButton.innerText = '新增';
+                
+                const inputs = document.querySelectorAll('.form-container input, .form-container textarea');
+                inputs.forEach(input => {
+                    input.setAttribute('readonly', true);
+                });
+                resetForm();
+                resetButtons();
+
+            } else {
+                addMode = true;
+                addButton.style.backgroundColor = '#ff0000';
+                addButton.innerText = '取消'; 
+                
+                const inputs = document.querySelectorAll('.form-container input, .form-container textarea');
+                inputs.forEach(input => {
+                    input.removeAttribute('readonly');
+                    input.value = '';
+                });
+
+                changeButton(event);
+            }       
+        }
+
+        // func to delete
+        function deleteData() {
+            const highlightedRow = document.querySelector('.highlight');
+            
+            if (!highlightedRow) {
+                alert('請選擇要刪除的資料欄位');
+                return;
+            }
+
+            var y = confirm('確認刪除資料欄位?');
+
+            if (y) {
+                const id = document.getElementById('worker-id').value;
+
+                const i = new URLSearchParams();
+                i.append('id', id);
+                
+                fetch('../api/workerData_Delete.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: i
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('客戶編號 '+ id +' 刪除成功!');
+                        location.reload();
+                    } else if (data.status === 'failed') {
+                        alert('刪除失敗');
+                    }
+                })
+                .catch(error => {
+                    alert('資料庫格式有誤，請嘗試由資料庫進行修改');
+                })
+            } else {
+                return;
+            }    
+        }
+        // func to get time
+        function getTime() {
+            const now = new Date();
+            
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+        
+        // search function
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const filter = this.value.toLowerCase();  // Get the search input and convert to lowercase
+            const rows = document.querySelectorAll('#dataTable tbody tr');  // Select all table rows
+
+            // Loop through each row and check if it matches the search query
+            rows.forEach(row => {
+                const cells = row.getElementsByTagName('td');
+                let match = false;
+
+                // Loop through each cell in the row
+                for (let i = 0; i < cells.length; i++) {
+                    const cellContent = cells[i].innerText.toLowerCase();  // Get cell content and convert to lowercase
+
+                    // If any cell content matches the search query, set match to true
+                    if (cellContent.includes(filter)) {
+                        match = true;
+                        break;
+                    }
+                }
+
+                // Show the row if there's a match, hide it otherwise
+                if (match) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+    </script>
+
+</body>
