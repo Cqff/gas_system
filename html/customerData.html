@@ -292,7 +292,11 @@
             <textarea id="notes" name="notes" rows="4" cols="48" style="resize: none;"></textarea>
 
             <label for="customer-company">公司編號</label>
-            <input type="number" id="customer-company" name="customer-company" readonly>
+            <input list="company" type="text" id="customer-company" name="customer-company" readonly>
+
+            <datalist id="company">
+               
+            </datalist> 
 
             <div class="buttonGroup">
                 <button disabled type="button" id="modify" class="modify" onclick="changeButton(event)">編輯</button>
@@ -301,7 +305,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {            
             fetch('../api/customerData_Show.php')
             .then(response => response.json())
             .then(data => {
@@ -344,6 +348,8 @@
             
             addMode = false;
             hasTarget = false;
+
+            getCompany();
 
         })
 
@@ -721,6 +727,23 @@
             const seconds = String(now.getSeconds()).padStart(2, '0');
             
             return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+
+        function getCompany() {
+            fetch('../api/gas-company_getCompany.php')
+            .then(response => response.json())
+            .then(data => {
+                const datalist = document.getElementById('company');
+                
+                datalist.innerHTML = '';
+
+                data.forEach(company => {
+                    const option = document.createElement('option');
+                    option.value = company.COMPANY_Id;
+                    option.textContent = company.COMPANY_Name;  
+                    datalist.appendChild(option);
+                });
+            })
         }
         
         // search function

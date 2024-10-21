@@ -307,7 +307,11 @@
             <input type="text" id="gas-id" name="gas-id" readonly>
 
             <label for="gas-company">公司編號</label>
-            <input type="number" id="gas-company" name="gas-company" readonly>
+            <input list="company" type="text" id="gas-company" name="gas-company" readonly>
+
+            <datalist id="company">
+               
+            </datalist> 
             
             <label for="gas-empty-weight">容器實重(含閥)</label>
             <input type="text" id="gas-empty-weight" name="gas-empty-weight" readonly>
@@ -369,6 +373,8 @@
             
             addMode = false;
             hasTarget = false;
+
+            getCompany();
 
         })
 
@@ -741,6 +747,23 @@
             
             const time = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
             document.getElementById('gas-examday').value = time;
+        }
+
+        function getCompany() {
+            fetch('../api/gas-company_getCompany.php')
+            .then(response => response.json())
+            .then(data => {
+                const datalist = document.getElementById('company');
+                
+                datalist.innerHTML = '';
+
+                data.forEach(company => {
+                    const option = document.createElement('option');
+                    option.value = company.COMPANY_Id;
+                    option.textContent = company.COMPANY_Name;  
+                    datalist.appendChild(option);
+                });
+            })
         }
         
         // search function

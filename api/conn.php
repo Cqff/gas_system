@@ -1,9 +1,10 @@
 <?php
 // Create 4 variables to store these information
-$server="localhost";
-$username="root";
-$password="";
+$server="database-1.cxzg4akd6dhy.ap-northeast-1.rds.amazonaws.com";
+$username="admin";
+$password="Bk+w%H86";
 $database = "gasstation";
+
 // Create connection
 $conn = new mysqli($server, $username, $password, $database);
 // Check connection
