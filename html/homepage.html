@@ -132,7 +132,7 @@
             const managerId = sessionStorage.getItem('managerId');
 
             if (managerId) {
-                fetch(`http://127.0.0.1/gas_system/api/gas-company_getManager.php?managerId=${managerId}`)
+                fetch(`../api/gas-company_getManager.php?managerId=${managerId}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data.response === 'success') {

@@ -120,6 +120,11 @@
             width: 100%;
         }
 
+        button:disabled {
+            background-color: darkgray;
+            pointer-events: none;
+        }
+
         .add {
             background-color: #00d63d;
         }
@@ -195,6 +200,41 @@
         .material-symbols-outlined {
             color: black;
         }
+
+        .buttonGroup {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .buttonGroup-modify {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .submit {
+            margin-right: 5px;
+            margin-top: 10px;
+            position: relative;
+            background-color: #14b642da;
+        }
+
+        .cancel {
+            margin-left: 5px;
+            margin-top: 10px;
+            position: relative; 
+            background-color: #bb0a0ac5;
+        }
+
+        .showUnassigned {
+            margin-right: 5px;
+            margin-top: 10px;
+            background-color: #0056b3;
+            color: #ffffff;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -208,7 +248,10 @@
                         </span>
                     </button>
                 </div>
-                <input type="text" id="searchInput" class="search-input" placeholder="搜索...">
+                <div>
+                    <input type="text" id="searchInput" class="search-input" placeholder="搜索...">
+                    <button type="button" id="showUnassigned" class="showUnassigned" onclick="showUnassigned()">顯示尚未指派</button>
+                </div>  
                 <div class="button-container">
                     <button type="button" class="add" onclick="openNewOrderPopup()">新增</button>
                     <button type="button" class="delete" onclick="confirmDelete()">刪除</button>
@@ -219,7 +262,6 @@
                     <tr>
                         <th>訂單編號</th>
                         <th>顧客編號</th>
-                        <th>當前瓦斯量</th>
                         <th>顧客電話</th>
                         <th>送貨地址</th>
                         <th>送貨日期</th>
@@ -228,9 +270,7 @@
                         <th>瓦斯桶種類</th>
                         <th>瓦斯規格</th>
                         <th>數量</th>
-                        <th>顧客累積殘氣量</th>
-                        <th>派送人員</th>
-                        <th>感應器編號</th>
+                        <th>配送員編號</th>
 
                     </tr>
                 </thead>
@@ -245,10 +285,13 @@
             <input type="text" id="order-id" name="order-id" readonly>
 
             <label for="order-date">送貨日期</label>
-            <input type="date" id="order-date" name="order-date" readonly>
+            <input type="text" id="order-date" name="order-date" readonly>
 
             <label for="order-time">送貨時間</label>
-            <input type="time" id="order-time" name="order-time" readonly>
+            <input type="text" id="order-time" name="order-time" readonly>
+
+            <label for="customer-id">客戶編號</label>
+            <input type="text" id="customer-id" name="customer-id" readonly>
             
             <label for="customer-name">客戶名稱</label>
             <input type="text" id="customer-name" name="customer-name" readonly>
@@ -262,23 +305,229 @@
             <label for="unit">瓦斯規格 (kg)</label>
             <input type="text" id="unit" name="unit" readonly>
             
-            <label for="unit-price">累積殘氣 (kg)</label>
-            <input type="number" id="gas_ca" name="gas_ca" readonly>
-            
-            <label for="total-price">總價</label>
-            <input type="number" id="total-price" name="total-price" readonly>
-            
-            <label for="worker">配送員</label>
-            <input type="text" id="worker" name="worker" readonly>
-            
-            <label for="remarks">備註</label>
-            <textarea id="remarks" name="remarks" rows="4" cols="48" style="resize: none;"></textarea>
-            
-            <button type="button" class="modify" onclick="modifyOrder()">編輯</button>
+            <label for="worker">配送員編號</label>
+            <input list="workerList" type="text" id="worker" name="worker" readonly>
+
+            <datalist id="workerList">
+               
+            </datalist> 
+    
+            <div class="buttonGroup">
+                <button disabled type="button" id="modify" class="modify" onclick="changeButton(event)">編輯</button>
+            </div> 
         </div>
     </div>
-    <script src="../js/dashboard.js"></script>
+
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const managerId = sessionStorage.getItem('managerId');
+            console.log(managerId);
+            fetch(`../api/gas-company_getOrders.php`)
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#orderTable tbody');
+                    tableBody.innerHTML = '';
+                    data.forEach(order => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${order.ORDER_Id}</td>
+                            <td>${order.CUSTOMER_Id}</td>
+                            <td>${order.CUSTOMER_PhoneNo !== null ? order.CUSTOMER_PhoneNo : '無資料'}</td>
+                            <td>${order.DELIVERY_Address !== null ? order.DELIVERY_Address : '無資料'}</td>
+                            <td>${order.EXPECT_Time !== null ? order.EXPECT_Time.split(' ')[0] : '無資料'}</td>
+                            <td>${order.EXPECT_Time !== null ? order.EXPECT_Time.split(' ')[1] : '無資料'}</td>
+                            <td>${order.CUSTOMER_Name !== null ? order.CUSTOMER_Name : '無資料'}</td>
+                            <td>${order.Order_type !== null ? order.Order_type : '無資料'}</td>
+                            <td>${order.Order_weight !== null ? order.Order_weight : '無資料'}</td>
+                            <td>${order.Gas_Quantity !== null ? order.Gas_Quantity : '無資料'}</td>
+                            <td>${order.WORKER_Id !== null ? order.WORKER_Id : '尚未指派'}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching orders:', error);
+                });
+
+                document.addEventListener('click', handleClickOutsideForm);
+
+                addMode = false;
+                hasTarget = false;
+
+                getWorker();
+        })
+        
+        function changeButton(event) {
+            event.stopPropagation();
+                
+            const inputs = document.querySelectorAll('.form-container input, .form-container textarea');
+            document.getElementById('worker').removeAttribute('readonly');
+            
+            const buttonGroup = document.querySelector('.buttonGroup');
+
+            const submitBtn = document.createElement('button');
+            submitBtn.type = 'button1';
+            submitBtn.innerText = '送出';
+            submitBtn.classList.add('submit');
+            submitBtn.onclick = function() {
+                const y = confirm('確認指派員工?');
+                if (y) {
+                    const customer_id = document.getElementById('customer-id').value;
+                    const worker_id = document.getElementById('worker').value === 0 ? '' : document.getElementById('worker').value;
+                    const order_id = document.getElementById('order-id').value;
+
+                    const a = new URLSearchParams();
+                    a.append('customer_id', customer_id);
+                    a.append('worker_id', worker_id);
+                    a.append('order_id', order_id);
+
+                    fetch('../api/gas-company_assignOrder.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: a
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'assign_success') {
+                            alert('指派成功!');
+                            location.reload();
+                        } else if (data.status === 'unassign_success') {
+                            alert('取消指派成功!');
+                            location.reload();
+                        } else {
+                            alert('指派失敗!');
+                        }
+                    })
+                    .catch(error => {
+                            alert('指派錯誤!');
+                            console.log(customer_id, worker_id. order_id);
+                    })
+                } else {
+                    return;
+                }
+            }
+
+            const cancelBtn = document.createElement('button');
+            cancelBtn.type = 'button1';
+            cancelBtn.innerText = '取消';
+            cancelBtn.classList.add('cancel');
+            cancelBtn.onclick = function() {
+                resetForm();
+                resetButtons();
+                const inputs = document.querySelectorAll('.form-container input, .form-container textarea');
+                inputs.forEach(input => input.setAttribute('readonly', true));
+            };
+
+            buttonGroup.innerHTML = '';  
+            buttonGroup.appendChild(submitBtn);
+            buttonGroup.appendChild(cancelBtn);
+
+            buttonGroup.classList.add('buttonGroup-modify');
+                
+        }
+
+        // reset buttons to original
+        function resetButtons() {
+            const buttonGroup = document.querySelector('.buttonGroup');
+            buttonGroup.classList.remove('buttonGroup-modify');
+            buttonGroup.innerHTML = `
+                <button disabled type="button" id="modify" class="modify" onclick="changeButton(event)">編輯</button>
+            `;
+        
+        }
+
+        function handleClickOutsideForm(event) {
+            const formContainer = document.querySelector('.form-container');
+            const buttonGroup = document.querySelector('.buttonGroup');
+            const addB = document.querySelector('.add');
+           
+
+            if (!formContainer.contains(event.target) && !buttonGroup.contains(event.target) && !addB.contains(event.target)) {
+                // If in addMode, reset it
+                if (addMode) {
+                    addMode = false; // Exit add mode
+            
+                    const addButton = document.getElementById('add');
+                    addButton.style.backgroundColor = '';
+                    addButton.innerText = '新增';
+                }
+
+                const inputs = document.querySelectorAll('.form-container input, .form-container textarea');
+                inputs.forEach(input => input.setAttribute('readonly', true));
+                resetForm();
+                resetButtons();
+
+                if (hasTarget) {
+                    const modifyButton = document.getElementById('modify');
+                    if (modifyButton) {
+                        modifyButton.removeAttribute('disabled');
+                    }
+                }
+            }
+        }
+
+        let originalFormData = {};
+
+        // func to get and save the form
+        function getOriginalForm(cells) {
+            // prevent getting empty data
+            if (cells.length === 0) {
+                return;
+            }
+
+            document.getElementById('order-id').value = cells[0].innerText;
+            document.getElementById('order-date').value = cells[4].innerText;
+            document.getElementById('order-time').value = cells[5].innerText;
+            document.getElementById('customer-id').value = cells[1].innerText;
+            document.getElementById('customer-name').value = cells[6].innerText;
+            document.getElementById('order-content').value = cells[7].innerText;
+            document.getElementById('quantity').value = cells[9].innerText;
+            document.getElementById('unit').value = cells[8].innerText;
+            document.getElementById('worker').value = cells[10].innerText;
+
+            originalFormData = {
+                id: cells[0].innerText,
+                date: cells[4].innerText,
+                time: cells[5].innerText,
+                cid: cells[1].innerText,
+                name: cells[6].innerText,
+                cont: cells[7].innerText,
+                quan: cells[9].innerText,
+                unit: cells[8].innerText,
+                worker: cells[10].innerText,
+            };
+        }
+
+        // reset the form
+        function resetForm() {
+            // prevent putting undefined data
+            if (Object.keys(originalFormData).length === 0) {
+                document.getElementById('order-id').value = '';
+                document.getElementById('order-date').value = '';
+                document.getElementById('order-time').value = '';
+                document.getElementById('customer-id').value = '';
+                document.getElementById('customer-name').value = '';
+                document.getElementById('order-content').value = '';
+                document.getElementById('quantity').value = '';
+                document.getElementById('unit').value = '';
+                document.getElementById('worker').value = '';
+
+            } else {
+                document.getElementById('order-id').value = originalFormData.id;
+                document.getElementById('order-date').value = originalFormData.date;
+                document.getElementById('order-time').value = originalFormData.time;
+                document.getElementById('customer-id').value = originalFormData.cid;
+                document.getElementById('customer-name').value = originalFormData.name;
+                document.getElementById('order-content').value = originalFormData.cont;
+                document.getElementById('quantity').value = originalFormData.quan;
+                document.getElementById('unit').value = originalFormData.unit;
+                document.getElementById('worker').value = originalFormData.worker;
+
+            }
+        }
+
         function openNewOrderPopup() {
             window.open('new_order.html', 'New Order', 'width=600,height=400');
         }
@@ -286,39 +535,30 @@
         document.getElementById('orderTable').addEventListener('click', function(event) {
             const target = event.target.closest('tr');
             if (target) {
+                hasTarget = true;
                 document.querySelectorAll('tr').forEach(row => row.classList.remove('highlight'));
                 target.classList.add('highlight');
                 
                 const cells = target.getElementsByTagName('td');
                 document.getElementById('order-id').value = cells[0].innerText;
-                document.getElementById('order-date').value = cells[5].innerText;
-                document.getElementById('order-time').value = cells[6].innerText;
-                document.getElementById('customer-name').value = cells[7].innerText;
-                document.getElementById('order-content').value = cells[8].innerText;
-                document.getElementById('quantity').value = cells[10].innerText;
-                document.getElementById('unit').value = cells[9].innerText;
-                document.getElementById('gas_ca').value = cells[11].innerText;
-                document.getElementById('worker').value = cells[12].innerText; 
-            //     const workerDropdown = document.getElementById('worker');
-            //     const workerName = cells[12].innerText;
-            //     let optionExists = false;
+                document.getElementById('order-date').value = cells[4].innerText;
+                document.getElementById('order-time').value = cells[5].innerText;
+                document.getElementById('customer-id').value = cells[1].innerText;
+                document.getElementById('customer-name').value = cells[6].innerText;
+                document.getElementById('order-content').value = cells[7].innerText;
+                document.getElementById('quantity').value = cells[9].innerText;
+                document.getElementById('unit').value = cells[8].innerText;
+                document.getElementById('worker').value = cells[10].innerText; 
+                
+                getOriginalForm(cells);
 
-            //     for (let i = 0; i < workerDropdown.options.length; i++) {
-            //         if (workerDropdown.options[i].value === workerName) {
-            //             workerDropdown.selectedIndex = i;
-            //             optionExists = true;
-            //             break;
-            //         }
-            //     }
-
-            //     if (!optionExists) {
-            //         const newOption = document.createElement('option');
-            //         newOption.value = workerName;
-            //         newOption.text = workerName;
-            //         workerDropdown.add(newOption);
-            //         workerDropdown.selectedIndex = workerDropdown.options.length - 1;
-            //     }
-            //     document.getElementById('remarks').value = ''; 
+                // prevent modify button to be clicked when form is empty
+                const modifyButton = document.getElementById('modify');
+                if (modifyButton) {
+                    modifyButton.removeAttribute('disabled');
+                    
+                }
+             
              }
         });
 
@@ -348,111 +588,38 @@
             });
         });
 
-        setInterval(function() {
-                loadOrders();
-            }, 20000);
+        function getWorker() {
+            fetch('../api/gas-company_getWorkers.php')
+            .then(response => response.json())
+            .then(data => {
+                const datalist = document.getElementById('workerList');
+                
+                datalist.innerHTML = '<option value="0">不指派任何員工';
 
-        function modifyOrder() {
-            const modifyButton = document.querySelector('.modify');
-            const inputs = document.querySelectorAll('.form-container input, .form-container textarea, .form-container select');
+                data.forEach(workers => {
+                    const option = document.createElement('option');
+                    option.value = workers.WORKER_Id;
+                    option.textContent = workers.WORKER_Name;  
+                    datalist.appendChild(option);
+                });
+            })
+        }
 
-            if (modifyButton.textContent === '編輯') {
-                inputs.forEach(input => input.removeAttribute('readonly'));
-                modifyButton.textContent = '儲存修改';
-                modifyButton.style.backgroundColor = '#28a745'; // Change button color to green
+        function showUnassigned() {
+            const showUnassigned = document.getElementById('showUnassigned');
+            const searchInput = document.getElementById('searchInput');
+
+            if (showUnassigned.innerText === '顯示尚未指派') {
+                searchInput.value = '尚未指派';
+                showUnassigned.innerText = '顯示全部訂單';             
             } else {
-                inputs.forEach(input => input.setAttribute('readonly', true));
-                modifyButton.textContent = '編輯';
-                modifyButton.style.backgroundColor = '#007bff'; // Change button color back to blue
-                submitOrder(); // Call the submitOrder function to save changes
+                searchInput.value = '';
+                showUnassigned.innerText = '顯示尚未指派'; 
             }
+            const event = new Event('keyup');
+            searchInput.dispatchEvent(event);
         }
 
-        function submitOrder() {
-            const orderData = {};
-            const inputs = document.querySelectorAll('.form-container input, .form-container textarea, .form-container select');
-            inputs.forEach(input => {
-                orderData[input.name] = input.value;
-            });
-
-            fetch('http://127.0.0.1/gas_system/api/gas-company_updateOrder.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(orderData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.response === 'success') {
-                    alert('訂單已成功更新');
-                } else {
-                    alert('更新訂單時發生錯誤');
-                }
-            })
-            .catch(error => {
-                console.error('Error updating order:', error);
-                alert('更新訂單時發生錯誤');
-            });
-        }
-
-        function confirmDelete() {
-            const highlightedRow = document.querySelector('.highlight');
-            if (!highlightedRow) {
-                alert('請選擇要刪除的訂單');
-                return;
-            }
-
-            const orderId = highlightedRow.getElementsByTagName('td')[0].innerText;
-            const confirmation = confirm('確定要刪除訂單編號 ' + orderId + ' 嗎？');
-
-            if (confirmation) {
-                deleteOrder(orderId);
-            }
-        }
-
-        function deleteOrder(orderId) {
-            fetch('http://127.0.0.1/gas_system/api/gas-company_deleteOrder.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ orderId: orderId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.response === 'success') {
-                    alert('訂單已成功刪除');
-                    loadOrders(); // Reload the orders to reflect the deletion
-                } else {
-                    alert('刪除訂單時發1生錯誤');
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting order:', error);
-                alert('刪除訂單時發生錯誤');
-            });
-        }
-
-        // function populateDeliveryManDropdown() {
-        //     fetch('http://127.0.0.1/gas_system/api/gas-company_getWorker.php')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         const deliveryManDropdown = document.getElementById('delivery-man');
-        //         deliveryManDropdown.innerHTML = '';
-        //         data.forEach(worker => {
-        //             const option = document.createElement('option');
-        //             option.value = worker.WORKER_Id;
-        //             option.textContent = worker.WORKER_Name;
-        //             deliveryManDropdown.appendChild(option);
-        //         });
-        //     })
-        //     .catch(error => {
-        //         console.error('Error fetching delivery men:', error);
-        //     });
-        // }
-
-        // document.addEventListener('DOMContentLoaded', populateDeliveryManDropdown);
     </script>
 </body>
 </html>

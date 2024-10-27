@@ -5,34 +5,20 @@ header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 include 'conn.php';
 
-if (isset($_GET['companyId'])) {
-    $companyId = $_GET['companyId'];
-} else {
-    http_response_code(400);
-    echo json_encode(array("response" => "error", "message" => "Invalid request: companyId is missing"));
-    exit();
-}
 
-$sql = "SELECT o.ORDER_Id, o.CUSTOMER_Id, c.CUSTOMER_PhoneNo, o.DELIVERY_Address, o.EXPECT_Time, od.exchange, c.CUSTOMER_Name, od.Order_type, od.Order_weight, o.Gas_Quantity, ca.Gas_Volume, a.WORKER_Id, w.WORKER_Name, o.sensor_id,
-                        (
-                            SELECT ROUND(((sh.SENSOR_Weight / 1000) - iot.Gas_Empty_Weight), 1) AS CurrentGasAmount
-                            FROM `sensor_history` sh
-                            JOIN `iot` iot ON sh.SENSOR_Id = iot.SENSOR_Id
-                            WHERE iot.CUSTOMER_Id = o.CUSTOMER_Id
-                            ORDER BY sh.SENSOR_Time DESC
-                            LIMIT 1
-                        ) AS CurrentGasAmount
+
+$sql = "SELECT o.ORDER_Id, o.CUSTOMER_Id, c.CUSTOMER_PhoneNo, o.DELIVERY_Address, o.EXPECT_Time, c.CUSTOMER_Name, od.Order_type, od.Order_weight, o.Gas_Quantity, ca.Gas_Volume, a.WORKER_Id, w.WORKER_Name
                     FROM `gas_order` o
                     LEFT JOIN `customer` c ON o.CUSTOMER_Id = c.CUSTOMER_Id
                     LEFT JOIN `gas_order_detail` od ON o.ORDER_Id = od.Order_ID
                     LEFT JOIN `customer_accumulation` ca ON o.CUSTOMER_Id = ca.Customer_Id
                     LEFT JOIN `assign` a ON o.ORDER_Id = a.ORDER_Id
                     LEFT JOIN `worker` w ON a.WORKER_Id = w.WORKER_Id
-                    WHERE o.COMPANY_Id = ?
-                    AND o.DELIVERY_Condition = 0";
+                    WHERE o.DELIVERY_Condition = 0
+                    GROUP BY o.ORDER_Id;";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $companyId);
+
 $stmt->execute();
 $result = $stmt->get_result();
 

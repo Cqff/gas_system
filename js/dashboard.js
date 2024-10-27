@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function loadOrders() {
     const managerId = sessionStorage.getItem('managerId');
-    fetch(`http://127.0.0.1/gas_system/api/gas-company_getOrders.php?companyId=${managerId}`)
+    fetch(`../api/gas-company_getOrders.php?companyId=${managerId}`)
         .then(response => response.json())
         .then(data => {
             const tableBody = document.querySelector('#orderTable tbody');
@@ -67,7 +67,7 @@ function submitOrder() {
         remarks: document.getElementById('remarks').value
     };
 
-    fetch('../php/submitOrder.php', {
+    fetch('../api/submitOrder.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
