@@ -391,10 +391,10 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.status === 'assign_success') {
-                            alert('指派成功!');
+                            alert('訂單編號' + order_id + '指派成功!');
                             location.reload();
                         } else if (data.status === 'unassign_success') {
-                            alert('取消指派成功!');
+                            alert('訂單編號' + order_id + '取消指派成功!');
                             location.reload();
                         } else {
                             alert('指派失敗!');
@@ -402,7 +402,7 @@
                     })
                     .catch(error => {
                             alert('指派錯誤!');
-                            console.log(customer_id, worker_id. order_id);
+                            //console.log(customer_id, worker_id, order_id);
                     })
                 } else {
                     return;
