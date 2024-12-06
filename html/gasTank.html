@@ -268,7 +268,7 @@
                         </span>
                     </button>
                 </div>
-                <input type="text" id="searchInput" class="search-input" placeholder="搜索...">
+                <input type="text" id="searchInput" class="search-input" placeholder="搜索... (3字元以上)">
                 <div class="button-container">
                     <button type="button" id="add" class="add" onclick="addData()">新增</button>
                     <button type="button" id="delete" class="delete" onclick="deleteData()">刪除</button>
@@ -339,6 +339,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            /*
             fetch('../api/gasTank_Show.php')
             .then(response => response.json())
             .then(data => {
@@ -368,7 +369,7 @@
                     tableBody.appendChild(row);
                 })
             })
-
+            */
             document.addEventListener('click', handleClickOutsideForm);
             
             addMode = false;
@@ -769,31 +770,58 @@
         // search function
         document.getElementById('searchInput').addEventListener('input', function() {
             const filter = this.value.toLowerCase();  // Get the search input and convert to lowercase
-            const rows = document.querySelectorAll('#gasTable tbody tr');  // Select all table rows
 
-            // Loop through each row and check if it matches the search query
-            rows.forEach(row => {
-                const cells = row.getElementsByTagName('td');
-                let match = false;
+            // If the search input is empty, do not perform fetch
+            if (filter.length === 0) {
+                document.querySelector('#gasTable tbody').innerHTML = ''; // Clear the table if no search query
+                return;
+            }
 
-                // Loop through each cell in the row
-                for (let i = 0; i < cells.length; i++) {
-                    const cellContent = cells[i].innerText.toLowerCase();  // Get cell content and convert to lowercase
+            if (filter.length >= 3) {
+                // Perform the fetch when the user types
+                const requestData = new URLSearchParams();
+                requestData.append('filter', filter);
 
-                    // If any cell content matches the search query, set match to true
-                    if (cellContent.includes(filter)) {
-                        match = true;
-                        break;
-                    }
-                }
+                fetch('../api/gasTank_Show.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: requestData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#gasTable tbody');
+                    tableBody.innerHTML = '';  // Clear existing rows
 
-                // Show the row if there's a match, hide it otherwise
-                if (match) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
+                    data.forEach(gData => {
+                        const row = document.createElement('tr');
+
+                        row.innerHTML = `
+                            <td>${gData.TANK_Id !== null ? gData.TANK_Id : '' }</td>
+                            <td>${gData.GAS_Id !== null ? gData.GAS_Id : '' }</td>
+                            <td>${gData.GAS_Company_Id !== null ? gData.GAS_Company_Id : '' }</td>
+                            <td>${gData.GAS_Weight_Empty !== null ? gData.GAS_Weight_Empty : '' }</td>
+                            <td>${gData.GAS_Type !== null ? gData.GAS_Type : '' }</td>
+                            <td>${gData.GAS_Price !== null ? gData.GAS_Price : '' }</td>
+                            <td>${gData.GAS_Volume !== null ? gData.GAS_Volume : '' }</td>
+                            <td>${gData.GAS_Examine_Day !== null ? gData.GAS_Examine_Day : '' }</td>
+                            <td>${gData.GAS_Produce_Day !== null ? gData.GAS_Produce_Day : '' }</td>
+                            <td>${gData.GAS_Supplier !== null ? gData.GAS_Supplier : '' }</td>
+                            <td>${gData.last_worker_id !== null ? gData.last_worker_id : '' }</td>
+                            <td>${gData.CUSTOMER_Name !== null ? gData.CUSTOMER_Name : '' }</td>
+                            <td>${gData.CUSTOMER_Address !== null ? gData.CUSTOMER_Address : '' }</td>
+                            <td>${gData.GAS_Notes !== null ? gData.GAS_Notes : '' }</td> 
+                        `;
+                        
+                        tableBody.appendChild(row);
+                    })
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    alert('An error occurred while fetching the data.');
+                });
+            }
         });
 
     </script>
